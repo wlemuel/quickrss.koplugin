@@ -1,6 +1,7 @@
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local UIManager = require("ui/uimanager")
 local Icons = require("modules/ui/icons")
+local Dispatcher = require("dispatcher")
 local _ = require("gettext")
 
 local QuickRSS = WidgetContainer:extend{
@@ -8,8 +9,30 @@ local QuickRSS = WidgetContainer:extend{
     is_doc_only = false,
 }
 
+function QuickRSS:onDispatcherRegisterActions()
+    Dispatcher:registerAction(
+        "quickrss_open",
+        {
+            category = "none",
+            event = "QuickRSSOpen",
+            title = _("Open QuickRSS"),
+            general = true,
+        }
+    )
+end
+
+function QuickRSS:onQuickRSSOpen()
+    local QuickRSSUI = require("modules/ui/feed_view")
+    UIManager:show(QuickRSSUI:new{})
+    return true
+end
+
 function QuickRSS:init()
-    self.ui.menu:registerToMainMenu(self)
+    self:onDispatcherRegisterActions()
+
+    if self.ui and self.ui.menu then
+        self.ui.menu:registerToMainMenu(self)
+    end
 end
 
 function QuickRSS:addToMainMenu(menu_items)
@@ -17,8 +40,7 @@ function QuickRSS:addToMainMenu(menu_items)
         text = Icons.FEEDS .. " " .. _("QuickRSS"),
         sorting_hint = "search",
         callback = function()
-            local QuickRSSUI = require("modules/ui/feed_view")
-            UIManager:show(QuickRSSUI:new{})
+            self:onQuickRSSOpen()
         end,
     }
 end
