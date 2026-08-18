@@ -825,7 +825,8 @@ function QuickRSSUI:_populateItems()
                       + math.max(0, page_count - 1) * sep_h
     local remaining   = math.max(0, self.list_h - content_h)
     local gap_count   = math.max(1, page_count - 1)
-    local gap         = (page_count > 1) and math.floor(remaining / gap_count) or 0
+    -- local gap         = (page_count > 1) and math.floor(remaining / gap_count) or 0
+    local gap         = 0
     local extra_px    = (page_count > 1) and (remaining - gap * gap_count) or remaining
     self.list_spacer.width = extra_px
 
